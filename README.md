@@ -15,7 +15,11 @@ All solutions for the tasks are exposed via dedicated API endpoints. Each endpoi
 
 Below is a list of the available endpoints (tasks may be updated or expanded over time):
 
-1. **`/verify`** - Solution for the "Verification Process Task" (human/robot verification - S01E02).
+
+1. **`/`** - Base endpoint that returns a welcome message.
+2. **`/verify`** - Solution for the "Verification Process Task" (human/robot verification - S01E02).
+3. **`/fix`** - Solution for the "Fix Calibration File" (Fix robot's calibration file - S01E03).
+
 
 ## Getting Started
 
@@ -52,3 +56,5 @@ For example:
 ```bash
 curl http://localhost:3000/verify
 ```
+should return a response with the FLAG, e.g.,
+`{{FLG:MEMORIES}}%`

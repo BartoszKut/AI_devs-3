@@ -1,4 +1,5 @@
 import { OpenAIService } from '../modules/OpenAIService';
+import { fetchFromApi } from "../utils/fetchFromApi";
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 
@@ -28,16 +29,6 @@ const PROMPT = `You are the helpful assistant who tries to help with identity ve
     AI: 1999
 </examples>
 `;
-
-const fetchFromApi = (url: string, body: object) => (
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    }).then(response => response.json())
-);
 
 const getVerifyQuestionFromRobot = async (): Promise<VerifyEndpointResponse> => (
     await fetchFromApi('https://xyz.ag3nts.org/verify', {
@@ -69,7 +60,6 @@ export const verify = async () => {
                 content: PROMPT,
             },
         ],
-        model: 'gpt-4o-mini'
     }) as ChatCompletion;
 
     const answer = generatedAiResponse.choices[0].message.content || '';

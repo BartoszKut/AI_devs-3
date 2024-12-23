@@ -1,8 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import dotenv from 'dotenv';
 import { OpenAIService } from '../modules/OpenAIService';
-import { fetchFromApi } from '../utils/fetchFromApi';
+import { verifyResults } from '../utils/verifyResults';
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 
@@ -21,8 +20,6 @@ type CalibrationFile = {
     copyright: string;
     'test-data': TestData[];
 };
-
-dotenv.config();
 
 const PROMPT = `You are the helpful assistant who tries to answer the questions
 
@@ -82,14 +79,6 @@ const updateCalibrationFile = (data: CalibrationFile, answers: { q: string, a: s
     });
 };
 
-const verifyCalibrationFile = async (data: CalibrationFile): Promise<{code: number, message: string}> => (
-    fetchFromApi('https://centrala.ag3nts.org/report', {
-        task: 'JSON',
-        apikey: process.env.AI_DEVS_API_KEY,
-        answer: data,
-    })
-);
-
 export const fix = async () => {
     const openAiService = new OpenAIService();
 
@@ -115,7 +104,7 @@ export const fix = async () => {
         JSON.parse(generatedAiResponse.choices[0].message.content || ''),
     );
 
-    const { message } = await verifyCalibrationFile(calibrationFile);
+    const { message } = await verifyResults(calibrationFile, 'JSON');
 
     return message;
 };

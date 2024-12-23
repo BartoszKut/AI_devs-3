@@ -38,6 +38,17 @@ cd AI_devs-3
 bun install
 ```
 
+### Configuration
+
+Copy the `.env-example` file to `.env`:
+    
+```bash
+cp .env-example .env
+```
+
+Edit the `.env` file to add your `OpenAI API key`.
+You can request the `AI_DEVS_API_KEY` via email - `bartosz.kut93@gmail.com`.
+
 ### Running the Application
 Start the application (e.g., in development mode) with:
 

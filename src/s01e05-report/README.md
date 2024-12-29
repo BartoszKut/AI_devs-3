@@ -20,5 +20,5 @@ The objective of this task is to process a file (`cenzura.txt`) containing poten
 3. **Use AI Tools for Automation**:
     - Mistral LLM from cloudfare is used to automate the process of identifying and replacing sensitive information with **CENZURA**.
 
-5. **Submit the Corrected text**:
+4. **Submit the Corrected text**:
    - The obfuscated text is sent to the server for validation, and a response message with the FLAG is received.

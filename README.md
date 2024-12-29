@@ -20,6 +20,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 2. **`/verify`** - Solution for the "Verification Process Task" (human/robot verification - S01E02).
 3. **`/fix`** - Solution for the "Fix Calibration File" (Fix robot's calibration file - S01E03).
 4. **`/censorship`** - Solution for the "Personal Data Censorship" (Agent data censorship system - S01E05).
+5. **`/mp3`** - Solution for the "Witness Interrogation Transcription Task" (Transcribe witness interrogations - S02E01).
 
 
 ## Getting Started

@@ -23,18 +23,18 @@ type CalibrationFile = {
 
 const PROMPT = `You are the helpful assistant who tries to answer the questions
 
-<rules>
-    - answer should be as short as possible
-    - answer should come in JSON format: "q": question, "a": answer
-</rules>
-
-<examples>
-    USER: What is the capital of Poland? What is the currency of Poland?
-    AI: [
-        {"q": "What is the capital of Poland?", "a": "Warsaw"},
-        {"q": "What is the currency of Poland?", "a": "Zloty"}
-    ]
-</examples>
+    <rules>
+        - answer should be as short as possible
+        - answer should come in JSON format: "q": question, "a": answer
+    </rules>
+    
+    <examples>
+        USER: What is the capital of Poland? What is the currency of Poland?
+        AI: [
+            {"q": "What is the capital of Poland?", "a": "Warsaw"},
+            {"q": "What is the currency of Poland?", "a": "Zloty"}
+        ]
+    </examples>
 `;
 
 const filePath = path.join(__dirname, '/calibration-file.txt');

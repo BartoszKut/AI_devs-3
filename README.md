@@ -21,6 +21,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 3. **`/fix`** - Solution for the "Fix Calibration File" (Fix robot's calibration file - S01E03).
 4. **`/censorship`** - Solution for the "Personal Data Censorship" (Agent data censorship system - S01E05).
 5. **`/mp3`** - Solution for the "Witness Interrogation Transcription Task" (Transcribe witness interrogations - S02E01).
+6. **`/city`** - Solution for the "City Recognition Task" (City recognition based on map fragments - S02E02).
 
 
 ## Getting Started

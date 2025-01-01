@@ -2,10 +2,7 @@ import OpenAI from 'openai';
 import fs from 'fs';
 
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
-
-export interface OpenAIWhisperResponse {
-    text: string;
-}
+import type { APIPromise } from 'openai/core';
 
 export class OpenAIService {
     private openai: OpenAI;
@@ -41,12 +38,12 @@ export class OpenAIService {
             console.error('Error in OpenAI completion:', error);
             throw error;
         }
-    }
+    };
 
     async sttTranscription(config: {
         pathToFile: string,
         model?: string,
-    }): Promise<OpenAIWhisperResponse> {
+    }): Promise<APIPromise<OpenAI.Audio.Transcriptions.Transcription>> {
         const { pathToFile, model = 'whisper-1' } = config;
 
         try {
@@ -59,5 +56,28 @@ export class OpenAIService {
 
             throw new Error('Failed to transcribe audio file');
         }
-    }
+    };
+
+    async imageGeneration(config: {
+        prompt: string,
+        model?: string,
+        quality?: string,
+        n?: number,
+        size?: '1024x1024' | '1024x1792' | '1792x1024',
+    }): Promise<APIPromise<OpenAI.Images.ImagesResponse>> {
+        const { prompt, model = 'dall-e-3', quality = 'standard', n = 1, size = '1024x1024' } = config;
+
+        try {
+            return await this.openai.images.generate({
+                model,
+                prompt,
+                n,
+                size,
+            });
+        } catch (error) {
+            console.error('Error in image generation:', error);
+
+            throw new Error('Failed to generate image');
+        }
+    };
 }

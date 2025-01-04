@@ -10,24 +10,24 @@ type VerifyEndpointResponse = {
 
 const PROMPT = `You are the helpful assistant who tries to help with identity verification
 
-<rules>
-    - answer always in english
-    - answer always with only one world 
-</rules>
-
-<context>
-    - the capital of Poland is Kraków
-    - the famous number from the book 'The Hitchhiker's Guide to the Galaxy' is 69
-    - the current year is 1999
-</context>
-
-<examples>
-    USER: What is the color of the grass?
-    AI: Green
+    <rules>
+        - answer always in english
+        - answer always with only one world 
+    </rules>
     
-    USER: What is the current year?
-    AI: 1999
-</examples>
+    <context>
+        - the capital of Poland is Kraków
+        - the famous number from the book 'The Hitchhiker's Guide to the Galaxy' is 69
+        - the current year is 1999
+    </context>
+    
+    <examples>
+        USER: What is the color of the grass?
+        AI: Green
+        
+        USER: What is the current year?
+        AI: 1999
+    </examples>
 `;
 
 const getVerifyQuestionFromRobot = async (): Promise<VerifyEndpointResponse> => (

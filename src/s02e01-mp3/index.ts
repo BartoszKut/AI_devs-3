@@ -1,35 +1,8 @@
-import fs from 'fs';
-import path from 'path';
 import { OpenAIService } from '../modules/OpenAIService';
 import { verifyResults } from '../utils/verifyResults';
+import { transcriptAudioFiles } from '../utils/transcriptAudioFiles';
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
-
-interface Transcript {
-    text: string;
-    witnessName: string;
-}
-
-const transcriptAudioFiles = async (directory: string, openAiService: OpenAIService): Promise<Transcript[]> => {
-    try {
-        const files = await fs.promises.readdir(directory);
-        const transcribedRecords: Transcript[] = [];
-
-        for (const file of files) {
-            const filePath = path.join(directory, file);
-
-            if (fs.lstatSync(filePath).isFile()) {
-                const transcribedSTT = await openAiService.sttTranscription({ pathToFile: filePath });
-                transcribedRecords.push({ ...transcribedSTT, witnessName: file });
-            }
-        }
-
-        return transcribedRecords;
-    } catch (error) {
-        console.error('Error reading directory:', error);
-        throw error;
-    }
-};
 
 const getInstituteName = async (transcriptData: { text: string }[], openAiService: OpenAIService): Promise<string | null> => {
     const PROMPT = `
@@ -54,7 +27,7 @@ const getInstituteName = async (transcriptData: { text: string }[], openAiServic
 };
 
 const getStreetNameWhereProfessorTeaches = async (context: string, openAiService: OpenAIService): Promise<string | null> => {
-    const PROMPT_TO_GET_UNIVERSITY = `
+    const promptToGetUniversity = `
         You are an intelligent and highly accurate assistant. Your sole task is to identify and provide the **exact name of the university** associated with a given institute.
 
         <context>
@@ -75,7 +48,7 @@ const getStreetNameWhereProfessorTeaches = async (context: string, openAiService
         </notes>
     `;
 
-    const PROMPT_TO_GET_STREET_NAME = `
+    const promptToGetStreetName = `
         You are an intelligent and highly accurate assistant. Your sole task is to identify and provide the **exact name of the street** where the specific provided institute is located.
 
         <context>
@@ -98,7 +71,7 @@ const getStreetNameWhereProfessorTeaches = async (context: string, openAiService
 
     const universityNameResponse = await openAiService.completion({
         messages: [
-            { role: 'system', content: PROMPT_TO_GET_UNIVERSITY },
+            { role: 'system', content: promptToGetUniversity },
             { role: 'user', content: context },
         ],
     }) as ChatCompletion;
@@ -107,7 +80,7 @@ const getStreetNameWhereProfessorTeaches = async (context: string, openAiService
 
     const streetNameResponse = await openAiService.completion({
         messages: [
-            { role: 'system', content: PROMPT_TO_GET_STREET_NAME },
+            { role: 'system', content: promptToGetStreetName },
             { role: 'user', content: `University - ${universityName}, Institute - ${context}` },
         ],
     }) as ChatCompletion;

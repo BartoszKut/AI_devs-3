@@ -1,7 +1,9 @@
+import path from "path";
 import fs from 'fs';
-import path from 'path';
+
 import { OpenAIService } from '../modules/OpenAIService';
 import { ChatCompletion } from 'openai/resources/chat/completions';
+import { prepareImagesForLLM } from '../utils/prepareImagesForLLM';
 
 const PROMPT = `You are a helpful assistant who is an expert in recognizing cities based on pieces of maps.
 
@@ -22,31 +24,6 @@ const PROMPT = `You are a helpful assistant who is an expert in recognizing citi
     </instructions>
 `;
 
-const encodeImageToBase64 = (filePath: string): string => {
-    const fileBuffer = fs.readFileSync(filePath);
-
-    return fileBuffer.toString('base64');
-};
-
-const prepareImagesForLLM = async (directory: string): Promise<{ type: string, image_url: { url: string } }[]> => {
-    const images = await fs.promises.readdir(directory);
-    const formattedImages: { type: string, image_url: { url: string } }[] = [];
-
-    for (const image of images) {
-        const imagePath = path.join(directory, image);
-
-        if (fs.lstatSync(imagePath).isFile()) {
-            const base64Image = encodeImageToBase64(imagePath);
-            formattedImages.push({
-                type: 'image_url',
-                image_url: { url: `data:image/jpeg;base64,${base64Image}` }
-            });
-        }
-    }
-
-    return formattedImages;
-}
-
 export const city = async () => {
     const openAiService = new OpenAIService();
 
@@ -62,10 +39,10 @@ export const city = async () => {
             {
                 role: 'user',
                 // @ts-ignore
-                content: [...preparedImages]
+                content: [...preparedImages.map(image => ({ type: image.type, image_url: image.image_url }))],
             },
         ],
     }) as ChatCompletion;
 
     return cityResponse.choices[0].message.content;
-}
+};

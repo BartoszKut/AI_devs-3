@@ -5,18 +5,18 @@ const URL_TO_FILE = `https://centrala.ag3nts.org/data/${process.env.AI_DEVS_API_
 
 const PROMPT = `You are the helpful assistant who change personal data to the word CENZURA
 
-<rules>
-    - replace personal data (name + surname, street + number, city, age of a person) with the word CENZURA
-    - take care of every dot, comma, space, etc. You must not rephrase the text
-</rules>
-
-<examples>
-    USER: Tożsamość osoby podejrzanej: Piotr Lewandowski. Zamieszkały w Łodzi przy ul. Wspólnej 22. Ma 34 lata.
-    AI: Tożsamość osoby podejrzanej: Cenzura. Zamieszkały w Cenzura przy ul. Cenzura. Ma Cenzura lata.
+    <rules>
+        - replace personal data (name + surname, street + number, city, age of a person) with the word CENZURA
+        - take care of every dot, comma, space, etc. You must not rephrase the text
+    </rules>
     
-    USER: Dane osoby podejrzanej: Adam Małysz. Zamieszkały w Warszawie przy ul. Nijakiej 21. Ma 29 lat.
-    AI: Tożsamość osoby podejrzanej: Cenzura. Zamieszkały w Cenzura przy ul. Cenzura. Ma Cenzura lat.
-</examples>
+    <examples>
+        USER: Tożsamość osoby podejrzanej: Piotr Lewandowski. Zamieszkały w Łodzi przy ul. Wspólnej 22. Ma 34 lata.
+        AI: Tożsamość osoby podejrzanej: Cenzura. Zamieszkały w Cenzura przy ul. Cenzura. Ma Cenzura lata.
+        
+        USER: Dane osoby podejrzanej: Adam Małysz. Zamieszkały w Warszawie przy ul. Nijakiej 21. Ma 29 lat.
+        AI: Tożsamość osoby podejrzanej: Cenzura. Zamieszkały w Cenzura przy ul. Cenzura. Ma Cenzura lat.
+    </examples>
 `;
 
 async function readFileFromUrl(url: string): Promise<string> {

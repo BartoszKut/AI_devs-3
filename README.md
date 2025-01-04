@@ -23,6 +23,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 5. **`/mp3`** - Solution for the "Witness Interrogation Transcription Task" (Transcribe witness interrogations - S02E01).
 6. **`/city`** - Solution for the "City Recognition Task" (City recognition based on map fragments - S02E02).
 7. **`/robot`** - Solution for the "Robot Image Generation Task" (Generate robot image based on description - S02E03).
+8. **`/categories`** - Solution for the "Categories Classification Task" (Classify text content into categories - S02E04).
 
 ## Getting Started
 

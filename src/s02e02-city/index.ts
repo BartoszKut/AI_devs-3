@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { OpenAIService } from '../modules/OpenAIService';
 import { ChatCompletion } from 'openai/resources/chat/completions';
-import { prepareImagesForLLM } from '../utils/prepareImagesForLLM';
+import { prepareLocalImagesForLLM } from '../utils/prepareLocalImagesForLLM';
 
 const PROMPT = `You are a helpful assistant who is an expert in recognizing cities based on pieces of maps.
 
@@ -27,7 +27,7 @@ const PROMPT = `You are a helpful assistant who is an expert in recognizing citi
 export const city = async () => {
     const openAiService = new OpenAIService();
 
-    const preparedImages = await prepareImagesForLLM('src/s02e02-city/maps');
+    const preparedImages = await prepareLocalImagesForLLM('src/s02e02-city/maps');
 
     const cityResponse = await openAiService.completion({
         model: 'gpt-4o',

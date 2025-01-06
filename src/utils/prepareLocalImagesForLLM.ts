@@ -15,7 +15,7 @@ const encodeImageToBase64 = (filePath: string): string => {
     return fileBuffer.toString('base64');
 };
 
-export const prepareImagesForLLM = async (directory: string): Promise<ImageForLLM[]> => {
+export const prepareLocalImagesForLLM = async (directory: string): Promise<ImageForLLM[]> => {
     const images = await fs.promises.readdir(directory);
     const formattedImages: ImageForLLM[] = [];
 

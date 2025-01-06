@@ -24,6 +24,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 6. **`/city`** - Solution for the "City Recognition Task" (City recognition based on map fragments - S02E02).
 7. **`/robot`** - Solution for the "Robot Image Generation Task" (Generate robot image based on description - S02E03).
 8. **`/categories`** - Solution for the "Categories Classification Task" (Classify text content into categories - S02E04).
+9. **`/arxiv`** - Solution for the "Arxiv Multimodal Task" (Answer the questions - S02E05).
 
 ## Getting Started
 

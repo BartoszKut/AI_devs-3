@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-import { prepareImagesForLLM } from '../utils/prepareImagesForLLM';
+import { prepareLocalImagesForLLM } from '../utils/prepareLocalImagesForLLM';
 import { OpenAIService } from '../modules/OpenAIService';
 import { ChatCompletion } from 'openai/resources/chat/completions';
 import { transcriptAudioFiles } from '../utils/transcriptAudioFiles';
 import { verifyResults } from '../utils/verifyResults';
 
-import type { ImageForLLM } from '../utils/prepareImagesForLLM';
+import type { ImageForLLM } from '../utils/prepareLocalImagesForLLM';
 
 interface FileContent {
     fileName: string;
@@ -32,7 +32,7 @@ const getTextFilesContent = (directory: string): FileContent[] => {
 };
 
 const convertPngToTxt = async (openAiService: OpenAIService): Promise<FileContent[]> => {
-    const preparedImages: ImageForLLM[] = await prepareImagesForLLM('src/s02e04-categories/filesFromFactory');
+    const preparedImages: ImageForLLM[] = await prepareLocalImagesForLLM('src/s02e04-categories/filesFromFactory');
     const convertedImages: FileContent[] = [];
 
     const prompt = `Please extract all readable text from the PNG file provided. 

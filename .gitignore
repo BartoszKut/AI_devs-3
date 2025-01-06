@@ -43,3 +43,5 @@ package-lock.json
 
 /.idea
 .env
+
+src/s02e05-arxiv/downloads/*

@@ -32,7 +32,7 @@ const getTextFilesContent = (directory: string): FileContent[] => {
 };
 
 const convertPngToTxt = async (openAiService: OpenAIService): Promise<FileContent[]> => {
-    const preparedImages: ImageForLLM[] = await prepareLocalImagesForLLM('src/s02e04-categories/filesFromFactory');
+    const preparedImages: ImageForLLM[] = await prepareLocalImagesForLLM('assets/filesFromFactory');
     const convertedImages: FileContent[] = [];
 
     const prompt = `Please extract all readable text from the PNG file provided. 
@@ -45,7 +45,6 @@ const convertPngToTxt = async (openAiService: OpenAIService): Promise<FileConten
         const { type, image_url } = image;
 
         const convertedImage = await openAiService.completion({
-            model: 'gpt-4o-mini',
             messages: [
                 {
                     role: 'system',
@@ -138,8 +137,8 @@ export const categories = async () => {
     const openAiService = new OpenAIService();
 
     const imagesDescription = await convertPngToTxt(openAiService);
-    const transcribedRecords = await transcriptAudioFiles('src/s02e04-categories/filesFromFactory', openAiService);
-    const textFiles = getTextFilesContent('src/s02e04-categories/filesFromFactory');
+    const transcribedRecords = await transcriptAudioFiles('assets/filesFromFactory', openAiService);
+    const textFiles = getTextFilesContent('assets/filesFromFactory');
 
     const filteredFiles = await filterFiles([...imagesDescription, ...transcribedRecords, ...textFiles], openAiService);
     const { message } = await verifyResults(filteredFiles, 'kategorie');

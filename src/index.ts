@@ -8,6 +8,7 @@ import { city } from './s02e02-city';
 import { robot } from './s02e03-robot';
 import { categories } from './s02e04-categories';
 import { arxiv } from './s02e05-arxiv';
+import { documents } from './s03e01-documents';
 
 const app = new Elysia()
     .get('/', () => 'Hello Elysia')
@@ -19,6 +20,8 @@ const app = new Elysia()
     .get('/robot', () => robot())
     .get('/categories', () => categories())
     .get('/arxiv', () => arxiv())
+    .get('/arxiv', () => arxiv())
+    .get('/documents', () => documents())
     .listen(3000);
 
 console.log(

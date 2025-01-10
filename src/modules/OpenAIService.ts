@@ -3,6 +3,8 @@ import fs from 'fs';
 
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import type { APIPromise } from 'openai/core';
+import type { CreateEmbeddingResponse } from 'openai/resources/embeddings';
+import type { EmbeddingModel } from 'openai/src/resources/embeddings';
 
 export class OpenAIService {
     private openai: OpenAI;
@@ -53,7 +55,6 @@ export class OpenAIService {
             });
         } catch (error) {
             console.error('Error in STT Transcription:', error);
-
             throw new Error('Failed to transcribe audio file');
         }
     };
@@ -76,8 +77,26 @@ export class OpenAIService {
             });
         } catch (error) {
             console.error('Error in image generation:', error);
-
             throw new Error('Failed to generate image');
         }
     };
+
+    async createEmbedding(config: {
+        input: string | Array<string> | Array<number> | Array<Array<number>>;
+        model?: (string & {}) | EmbeddingModel;
+        encoding_format?: 'float' | 'base64';
+    }): Promise<CreateEmbeddingResponse> {
+        const { input, model = 'text-embedding-3-large', encoding_format = 'float' } = config;
+
+        try {
+            return await this.openai.embeddings.create({
+                model,
+                input,
+                encoding_format,
+            });
+        } catch (error) {
+            console.error('Error in embedding creation:', error);
+            throw new Error('Failed to create embedding');
+        }
+    }
 }

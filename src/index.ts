@@ -9,6 +9,7 @@ import { robot } from './s02e03-robot';
 import { categories } from './s02e04-categories';
 import { arxiv } from './s02e05-arxiv';
 import { documents } from './s03e01-documents';
+import { vectors } from './s03e02-vectors';
 
 const app = new Elysia()
     .get('/', () => 'Hello Elysia')
@@ -22,6 +23,7 @@ const app = new Elysia()
     .get('/arxiv', () => arxiv())
     .get('/arxiv', () => arxiv())
     .get('/documents', () => documents())
+    .get('/vectors', () => vectors())
     .listen(3000);
 
 console.log(

@@ -6,6 +6,9 @@ This repository was created as part of the **AI_devs3** course. The goal is to d
 
 - **[Bun](https://bun.sh/)**: A fast JavaScript runtime used for building and running the application.
 - **[Elysia](https://elysiajs.com/)**: A lightweight and efficient framework used to structure the project and handle functionality.
+- **[OpenAI](https://platform.openai.com/docs/overview)**: LLM suggested to use by course creators.
+- **[Qdrant](https://qdrant.tech/)**: Vector database with 1GB free forever cluster and no credit card required.
+- **[@qdrant/js-client-rest](https://github.com/qdrant/qdrant-js)**: Client to communicate with the Qdrant database.
 
 ## Project Structure
 
@@ -26,6 +29,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 8. **`/categories`** - Solution for the "Categories Classification Task" (Classify text content into categories - S02E04).
 9. **`/arxiv`** - Solution for the "Arxiv Multimodal Task" (Answer the questions - S02E05).
 10. **`/documents`** - Solution for the "Documents Metadata Task" (Prepare metadata for reports - S03E01).
+11. **`/vectors`** - Solution for the "Vectors Search Task" (Search for similar vectors - S03E02).
 
 ## Getting Started
 

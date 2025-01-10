@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import { OpenAIService } from '../modules/OpenAIService';
 import { generateKeyWords } from './utils/generateKeyWords';
-import { getFilesContent } from './utils/getFilesContent';
+import { getFilesContent } from '../utils/getFilesContent';
 import { verifyResults } from '../utils/verifyResults';
 
 import type  { ChatCompletion } from 'openai/resources/chat/completions';

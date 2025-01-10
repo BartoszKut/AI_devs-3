@@ -84,7 +84,6 @@ export const fix = async () => {
     const openAiService = new OpenAIService();
 
     const calibrationFile = await readCalibrationFile();
-
     const questions = processTestData(calibrationFile);
 
     const generatedAiResponse = await openAiService.completion({

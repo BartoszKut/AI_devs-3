@@ -18,7 +18,6 @@ All solutions for the tasks are exposed via dedicated API endpoints. Each endpoi
 
 Below is a list of the available endpoints (tasks may be updated or expanded over time):
 
-
 1. **`/`** - Base endpoint that returns a welcome message.
 2. **`/verify`** - Solution for the "Verification Process Task" (human/robot verification - S01E02).
 3. **`/fix`** - Solution for the "Fix Calibration File" (Fix robot's calibration file - S01E03).
@@ -30,6 +29,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 9. **`/arxiv`** - Solution for the "Arxiv Multimodal Task" (Answer the questions - S02E05).
 10. **`/documents`** - Solution for the "Documents Metadata Task" (Prepare metadata for reports - S03E01).
 11. **`/vectors`** - Solution for the "Vectors Search Task" (Search for similar vectors - S03E02).
+12. **`/database`** - Solution for the "Database Task" (Analyze database and retrieve specific datacenter IDs - S03E03).
 
 ## Getting Started
 

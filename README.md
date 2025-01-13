@@ -30,6 +30,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 10. **`/documents`** - Solution for the "Documents Metadata Task" (Prepare metadata for reports - S03E01).
 11. **`/vectors`** - Solution for the "Vectors Search Task" (Search for similar vectors - S03E02).
 12. **`/database`** - Solution for the "Database Task" (Analyze database and retrieve specific datacenter IDs - S03E03).
+13. **`/loop`** - Solution for the "Loop Task" (Locate Barbara Zawadzka using interconnected APIs - S03E04).
 
 ## Getting Started
 

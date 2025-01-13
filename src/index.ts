@@ -11,6 +11,7 @@ import { arxiv } from './s02e05-arxiv';
 import { documents } from './s03e01-documents';
 import { vectors } from './s03e02-vectors';
 import { database } from './s03e03-database';
+import { loop } from './s03e04-loop';
 
 const app = new Elysia()
     .get('/', () => 'Hello Elysia')
@@ -26,6 +27,7 @@ const app = new Elysia()
     .get('/documents', () => documents())
     .get('/vectors', () => vectors())
     .get('/database', () => database())
+    .get('/loop', () => loop())
     .listen(3000);
 
 console.log(

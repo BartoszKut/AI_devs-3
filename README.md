@@ -9,6 +9,9 @@ This repository was created as part of the **AI_devs3** course. The goal is to d
 - **[OpenAI](https://platform.openai.com/docs/overview)**: LLM suggested to use by course creators.
 - **[Qdrant](https://qdrant.tech/)**: Vector database with 1GB free forever cluster and no credit card required.
 - **[@qdrant/js-client-rest](https://github.com/qdrant/qdrant-js)**: Client to communicate with the Qdrant database.
+- **[Neo4j](https://neo4j.com/)**: Graph database.
+- **[neo4j-driver](https://www.npmjs.com/package/neo4j-driver)**: Official Neo4j driver for JavaScript.
+- **[docker](https://www.docker.com/)**: Containerization platform used to run the Neo4j database.
 
 ## Project Structure
 
@@ -31,6 +34,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 11. **`/vectors`** - Solution for the "Vectors Search Task" (Search for similar vectors - S03E02).
 12. **`/database`** - Solution for the "Database Task" (Analyze database and retrieve specific datacenter IDs - S03E03).
 13. **`/loop`** - Solution for the "Loop Task" (Locate Barbara Zawadzka using interconnected APIs - S03E04).
+14. **`/connections`** - Solution for the "Connections Task" (Find the shortest path from Rafał to Barbara using a graph database - S03E05).
 
 ## Getting Started
 

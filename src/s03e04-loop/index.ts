@@ -13,7 +13,7 @@ const fetchData = async (url: string, body: Record<string, any>) => {
         body: JSON.stringify({ apikey: process.env.AI_DEVS_API_KEY, ...body }),
     }).then((response) => response.json());
 
-    return response.message.split(" ");
+    return response.message.split(' ');
 };
 
 const extractNamesAndCitiesFromNote = async (
@@ -41,8 +41,8 @@ const extractNamesAndCitiesFromNote = async (
 
     const result = (await openAiService.completion({
         messages: [
-            { role: "system", content: prompt },
-            { role: "user", content: note },
+            { role: 'system', content: prompt },
+            { role: 'user', content: note },
         ],
     })) as ChatCompletion;
 

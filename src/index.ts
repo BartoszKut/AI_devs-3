@@ -13,6 +13,7 @@ import { vectors } from './s03e02-vectors';
 import { database } from './s03e03-database';
 import { loop } from './s03e04-loop';
 import { connections } from './s03e05-connections';
+import { photos } from './s04e01-photos';
 
 const app = new Elysia()
     .get('/', () => 'Hello Elysia')
@@ -30,6 +31,7 @@ const app = new Elysia()
     .get('/database', () => database())
     .get('/loop', () => loop())
     .get('/connections', () => connections())
+    .get('/photos', () => photos())
     .listen(3000);
 
 console.log(

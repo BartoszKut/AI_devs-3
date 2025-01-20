@@ -35,6 +35,8 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 12. **`/database`** - Solution for the "Database Task" (Analyze database and retrieve specific datacenter IDs - S03E03).
 13. **`/loop`** - Solution for the "Loop Task" (Locate Barbara Zawadzka using interconnected APIs - S03E04).
 14. **`/connections`** - Solution for the "Connections Task" (Find the shortest path from Rafał to Barbara using a graph database - S03E05).
+15. **`/photos`** - Solution for the "Photos Task" (Prepare an accurate description of Barbara based on damaged photos - S04E01).
+16. **`/research`** - Solution for the "Research Task" (Analyze research results and determine which results can be trusted - S04E02).
 
 ## Getting Started
 

@@ -14,7 +14,6 @@ export const processImageBasedOnBehavior = async (
 
     const fileName = extractFileName(imageUrl);
     if (!fileName) {
-
         console.error('Failed to extract file name from URL.');
         return null;
     }
@@ -58,10 +57,7 @@ const extractFileName = (imageUrl: string): string | null => {
     }
 };
 
-const extractNewImageFromResponse = (
-    responseMessage: string,
-    basePath: string
-): string | null => {
+const extractNewImageFromResponse = (responseMessage: string, basePath: string): string | null => {
     try {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         const urlMatch = responseMessage.match(urlRegex);
@@ -81,7 +77,10 @@ const extractNewImageFromResponse = (
 
         return null;
     } catch (error) {
-        console.error(`Error extracting new image URL or filename: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.error(
+            `Error extracting new image URL or filename: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+
         return null;
     }
 };

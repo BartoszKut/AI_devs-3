@@ -4,10 +4,10 @@ type MistralCompletionResponse = {
             role: string;
             content: string;
         }[];
-    },
+    };
     response: {
         response: string;
-    }
+    };
 }[];
 
 export class CloudflareMistralService {
@@ -20,7 +20,7 @@ export class CloudflareMistralService {
         const response = await fetch('https://mistral.bartosz-kut93.workers.dev/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: formData.toString(),
         });

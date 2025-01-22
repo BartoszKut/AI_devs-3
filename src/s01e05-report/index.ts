@@ -44,4 +44,4 @@ export const censorship = async () => {
     const { message } = await verifyResults(censoredData, 'CENZURA');
 
     return message;
-}
+};

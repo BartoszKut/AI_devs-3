@@ -6,6 +6,7 @@ import type { ChatCompletion } from 'openai/resources/chat/completions';
 const BARBARA_NOTE_URL = 'https://centrala.ag3nts.org/dane/barbara.txt';
 const LOOKING_NAME = 'BARBARA';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fetchData = async (url: string, body: Record<string, any>) => {
     const response = await fetch(url, {
         method: 'POST',
@@ -18,8 +19,8 @@ const fetchData = async (url: string, body: Record<string, any>) => {
 
 const extractNamesAndCitiesFromNote = async (
     note: string,
-    openAiService: OpenAIService
-): Promise<{ people: string[], cities: string[] }> => {
+    openAiService: OpenAIService,
+): Promise<{ people: string[]; cities: string[] }> => {
     const prompt = `You are a helpful assistant who identifies every name and city mentioned in the text.             
     
         <rules>
@@ -53,63 +54,57 @@ const fetchCitiesForPeople = async (people: string[]): Promise<string[]> => {
     const citiesSet = new Set<string>();
     await Promise.all(
         people.map(async (person) => {
-            const cities: string[] = await fetchData(
-                'https://centrala.ag3nts.org/people',
-                { query: person }
-            );
+            const cities: string[] = await fetchData('https://centrala.ag3nts.org/people', {
+                query: person,
+            });
             cities.forEach((city) => citiesSet.add(city));
-        })
+        }),
     );
     return Array.from(citiesSet);
 };
 
 const fetchPeopleForCities = async (
     cities: string[],
-    mentionedPeople: string[]
+    mentionedPeople: string[],
 ): Promise<string[]> => {
     const peopleSet = new Set<string>();
     await Promise.all(
         cities.map(async (city) => {
-            const people: string[] = await fetchData(
-                'https://centrala.ag3nts.org/places',
-                { query: city }
-            );
+            const people: string[] = await fetchData('https://centrala.ag3nts.org/places', {
+                query: city,
+            });
             people.forEach((person) => {
                 if (!mentionedPeople.includes(person)) {
                     peopleSet.add(person);
                 }
             });
-        })
+        }),
     );
     return Array.from(peopleSet);
 };
 
-const findWantedPossibleLocations = async (
-    cities: string[]
-): Promise<string[]> => {
+const findWantedPossibleLocations = async (cities: string[]): Promise<string[]> => {
     const barbaraLocations: string[] = [];
     await Promise.all(
         cities.map(async (city) => {
-            const people: string[] = await fetchData(
-                'https://centrala.ag3nts.org/places',
-                { query: city }
-            );
+            const people: string[] = await fetchData('https://centrala.ag3nts.org/places', {
+                query: city,
+            });
             if (people.includes(LOOKING_NAME)) {
                 barbaraLocations.push(city);
             }
-        })
+        }),
     );
     return barbaraLocations;
 };
 
 const recursiveCityPersonSearch = async (
     initialCities: string[],
-    initialPeople: string[]
+    initialPeople: string[],
 ): Promise<string[]> => {
     const visitedCities = new Set(initialCities);
     const visitedPeople = new Set(initialPeople);
 
-    let currentCities = [...initialCities];
     let currentPeople = [...initialPeople];
 
     while (true) {
@@ -125,7 +120,6 @@ const recursiveCityPersonSearch = async (
 
         unvisitedPeople.forEach((person) => visitedPeople.add(person));
 
-        currentCities = unvisitedCities;
         currentPeople = unvisitedPeople;
     }
 
@@ -144,7 +138,7 @@ export const loop = async (): Promise<string> => {
     const barbaraPossibleLocations = await findWantedPossibleLocations(allKnownCities);
 
     const filteredBarbaraLocations = barbaraPossibleLocations.filter(
-        (city) => !cities.includes(city)
+        (city) => !cities.includes(city),
     );
 
     const { message } = await verifyResults(filteredBarbaraLocations[0], 'loop');

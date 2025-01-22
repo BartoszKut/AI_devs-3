@@ -13,7 +13,7 @@ const QUESTION_URL = `https://centrala.ag3nts.org/data/${process.env.AI_DEVS_API
 type Question = {
     id: string;
     question: string;
-}
+};
 
 const fetchDocument = async (url: string): Promise<string> => {
     const response = await fetch(url);
@@ -38,12 +38,10 @@ const fetchQuestions = async (): Promise<Question[]> => {
 
     const questions = await response.text();
 
-    return questions
-        .split('\n')
-        .map((line) => {
-            const [id, question] = line.split('=');
-            return { id, question };
-        });
+    return questions.split('\n').map((line) => {
+        const [id, question] = line.split('=');
+        return { id, question };
+    });
 };
 
 const generateAnswers = async (
@@ -74,13 +72,13 @@ const generateAnswers = async (
             continue;
         }
 
-        const response = await openAiService.completion({
+        const response = (await openAiService.completion({
             messages: [
                 { role: 'system', content: prompt },
                 { role: 'user', content },
                 { role: 'user', content: `${question.question}` },
             ],
-        }) as ChatCompletion;
+        })) as ChatCompletion;
 
         answers[question.id] = response.choices[0].message.content?.trim() || '';
     }
@@ -88,7 +86,10 @@ const generateAnswers = async (
     return answers;
 };
 
-const extractImagesDescriptionFromDocument = async (html: string, openAiService: OpenAIService): Promise<string[]> => {
+const extractImagesDescriptionFromDocument = async (
+    html: string,
+    openAiService: OpenAIService,
+): Promise<string[]> => {
     const GET_IMAGE_DESCRIPTION_PROMPT = `You are an intelligent assistant. Describe the content of this image briefly.
         <rules>
             - Focus only on the most important details.
@@ -110,41 +111,48 @@ const extractImagesDescriptionFromDocument = async (html: string, openAiService:
     const figcaptionTagRgx = /<figcaption[^>]*>(.*?)<\/figcaption>/gs;
     const imgTagRgx = /<img[^>]*src='([^']*)'[^>]*>/gs;
 
-    const contentBetweenImgTags = [...html.matchAll(imgTagContentRegex)].map(match => match[1]);
+    const contentBetweenImgTags = [...html.matchAll(imgTagContentRegex)].map((match) => match[1]);
 
     const baseUrl = getBaseUrl(DOCUMENT_URL);
 
-    const validImageUrls = contentBetweenImgTags.flatMap(content => {
+    const validImageUrls = contentBetweenImgTags.flatMap((content) => {
         const matches = [...content.matchAll(imgTagRgx)];
-        return matches.map(match => `${baseUrl}${match[1]}`);
+        return matches.map((match) => `${baseUrl}${match[1]}`);
     });
 
-    return await Promise.all(validImageUrls.map(async imageUrl => {
-        const content = contentBetweenImgTags.find(content => content.includes(imageUrl)) || '';
-        const imageCaption = figcaptionTagRgx.exec(content)?.[1] || '';
+    return await Promise.all(
+        validImageUrls.map(async (imageUrl) => {
+            const content =
+                contentBetweenImgTags.find((content) => content.includes(imageUrl)) || '';
+            const imageCaption = figcaptionTagRgx.exec(content)?.[1] || '';
 
-        const imageDescriptionResponse = await openAiService.completion({
-            model: 'gpt-4o',
-            messages: [
-                { role: 'system', content: GET_IMAGE_DESCRIPTION_PROMPT },
-                { role: 'user', content: [{ type: 'image_url', image_url: { url: imageUrl } }] },
-            ],
-        }) as ChatCompletion;
+            const imageDescriptionResponse = (await openAiService.completion({
+                model: 'gpt-4o',
+                messages: [
+                    { role: 'system', content: GET_IMAGE_DESCRIPTION_PROMPT },
+                    {
+                        role: 'user',
+                        content: [{ type: 'image_url', image_url: { url: imageUrl } }],
+                    },
+                ],
+            })) as ChatCompletion;
 
-        const aiImageDescription = imageDescriptionResponse.choices[0].message.content;
+            const aiImageDescription = imageDescriptionResponse.choices[0].message.content;
 
-        const concatenatedDescriptionResponse = await openAiService.completion({
-            messages: [
-                { role: 'system', content: CONCAT_DESCRIPTION_WITH_CAPTION_PROMPT },
-                { role: 'user', content: `${aiImageDescription} ${imageCaption}` },
-            ],
-        }) as ChatCompletion;
+            const concatenatedDescriptionResponse = (await openAiService.completion({
+                messages: [
+                    { role: 'system', content: CONCAT_DESCRIPTION_WITH_CAPTION_PROMPT },
+                    { role: 'user', content: `${aiImageDescription} ${imageCaption}` },
+                ],
+            })) as ChatCompletion;
 
-        return concatenatedDescriptionResponse.choices[0].message.content ?? '';
-    }));
+            return concatenatedDescriptionResponse.choices[0].message.content ?? '';
+        }),
+    );
 };
 
 function readableStreamToNodeReadable(stream: ReadableStream<Uint8Array>): Readable {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return Readable.from(stream as any);
 }
 
@@ -164,7 +172,10 @@ async function downloadAudioFile(url: string, outputPath: string): Promise<void>
     });
 }
 
-const extractAndTranscribeAudioFromDocument = async (html: string, openAiService: OpenAIService): Promise<string> => {
+const extractAndTranscribeAudioFromDocument = async (
+    html: string,
+    openAiService: OpenAIService,
+): Promise<string> => {
     const audioTagRgx = /<source[^>]*src='([^']*)'[^>]*>/gs;
     const baseUrl = getBaseUrl(DOCUMENT_URL);
     const audioSrc = `${baseUrl}${audioTagRgx.exec(html)?.[1] || ''}`;
@@ -187,15 +198,25 @@ const extractAndTranscribeAudioFromDocument = async (html: string, openAiService
     return transcribedSTT.text;
 };
 
-const replaceTagsWithContent = (html: string, transcribedAudio: string, imagesDescription: string[]): string => {
-    const updatedHtml = html.replace(/<audio[^>]*>.*?<\/audio>/gs, `<audio>${transcribedAudio}</audio>`);
+const replaceTagsWithContent = (
+    html: string,
+    transcribedAudio: string,
+    imagesDescription: string[],
+): string => {
+    const updatedHtml = html.replace(
+        /<audio[^>]*>.*?<\/audio>/gs,
+        `<audio>${transcribedAudio}</audio>`,
+    );
 
     const figureTags = updatedHtml.match(/<figure[^>]*>.*?<\/figure>/gs) || [];
     let updatedHtmlWithImages = updatedHtml;
 
     figureTags.forEach((figureTag, index) => {
         if (imagesDescription[index]) {
-            updatedHtmlWithImages = updatedHtmlWithImages.replace(figureTag, `<figure>${imagesDescription[index]}</figure>`);
+            updatedHtmlWithImages = updatedHtmlWithImages.replace(
+                figureTag,
+                `<figure>${imagesDescription[index]}</figure>`,
+            );
         }
     });
 
@@ -208,16 +229,22 @@ export const arxiv = async () => {
 
     const documentHtml = await fetchDocument(DOCUMENT_URL);
 
-    const imagesDescription = await extractImagesDescriptionFromDocument(documentHtml, openAiService);
-    const transcribedAudio = await extractAndTranscribeAudioFromDocument(documentHtml, openAiService);
-
-    const updatedDocumentHtml = replaceTagsWithContent(documentHtml, transcribedAudio, imagesDescription);
-
-    const answers = await generateAnswers(
-        updatedDocumentHtml,
-        questions,
+    const imagesDescription = await extractImagesDescriptionFromDocument(
+        documentHtml,
         openAiService,
     );
+    const transcribedAudio = await extractAndTranscribeAudioFromDocument(
+        documentHtml,
+        openAiService,
+    );
+
+    const updatedDocumentHtml = replaceTagsWithContent(
+        documentHtml,
+        transcribedAudio,
+        imagesDescription,
+    );
+
+    const answers = await generateAnswers(updatedDocumentHtml, questions, openAiService);
 
     const { message } = await verifyResults(answers, 'arxiv');
 

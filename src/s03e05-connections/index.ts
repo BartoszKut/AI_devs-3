@@ -35,7 +35,9 @@ const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWO
 const fetchAndSaveData = async () => {
     const dbConnectService = new DbConnectService();
     const usersResponse = await dbConnectService.select<UserResponse>('select * from users');
-    const connectionsResponse = await dbConnectService.select<ConnectionResponse>('select * from connections');
+    const connectionsResponse = await dbConnectService.select<ConnectionResponse>(
+        'select * from connections',
+    );
 
     if (!usersResponse.reply || !connectionsResponse.reply) {
         throw new Error('Failed to fetch data from the database.');
@@ -58,18 +60,18 @@ const createGraphStructure = async (users: User[], connections: Connection[]) =>
                     access_level: user.access_level,
                     is_active: user.is_active,
                     lastlog: user.lastlog,
-                }
+                },
             );
         }
 
         for (const connection of connections) {
             await tx.run(
                 'MATCH (a:User {id: $user1_id}), (b:User {id: $user2_id}) ' +
-                'CREATE (a)-[:KNOWS]->(b)',
+                    'CREATE (a)-[:KNOWS]->(b)',
                 {
                     user1_id: connection.user1_id,
                     user2_id: connection.user2_id,
-                }
+                },
             );
         }
 
@@ -87,8 +89,8 @@ const findShortestPath = async (session: Session) => {
     try {
         const result = await session.run(
             'MATCH (start:User {username: "Rafał"}), (end:User {username: "Barbara"}), ' +
-            'p = shortestPath((start)-[:KNOWS*]->(end)) ' +
-            'RETURN p'
+                'p = shortestPath((start)-[:KNOWS*]->(end)) ' +
+                'RETURN p',
         );
 
         if (result.records.length === 0) {
@@ -97,8 +99,9 @@ const findShortestPath = async (session: Session) => {
         }
 
         const path = result.records[0].get('p');
-        // @ts-ignore
-        const names = path.segments.map((segment) => segment.start.properties.username)
+
+        const names = path.segments
+            .map((segment) => segment.start.properties.username)
             .concat(path.end.properties.username);
 
         return names.join(', ');

@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 export interface FileContent {
     fileName: string;
@@ -10,7 +10,7 @@ export const getFilesContent = (directory: string): FileContent[] => {
     const files = fs.readdirSync(directory);
     const factFilesContent: FileContent[] = [];
 
-    files.forEach(file => {
+    files.forEach((file) => {
         const filePath = path.join(directory, file);
 
         if (file.endsWith('.txt')) {

@@ -5,9 +5,12 @@ import { generateKeyWords } from './utils/generateKeyWords';
 import { getFilesContent } from '../utils/getFilesContent';
 import { verifyResults } from '../utils/verifyResults';
 
-import type  { ChatCompletion } from 'openai/resources/chat/completions';
+import type { ChatCompletion } from 'openai/resources/chat/completions';
 
-const findPersonFromReport = async(report: string, openAiService: OpenAIService): Promise<string> => {
+const findPersonFromReport = async (
+    report: string,
+    openAiService: OpenAIService,
+): Promise<string> => {
     const prompt = `
         You are an expert in extracting information from text. Your task is to analyze the provided text and extract the name of the person who wrote the report.
         
@@ -32,29 +35,29 @@ const findPersonFromReport = async(report: string, openAiService: OpenAIService)
         </example>
     `;
 
-    const personResponse = await openAiService.completion({
+    const personResponse = (await openAiService.completion({
         messages: [
             {
                 role: 'system',
-                content: prompt
+                content: prompt,
             },
             {
                 role: 'user',
                 content: report,
             },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return personResponse.choices[0].message.content || '';
-}
+};
 
-const connectTextWithPerson = async(
+const connectTextWithPerson = async (
     directory: string,
-    openAiService: OpenAIService
-): Promise<{fileName: string, persons: string[]}[]> => {
+    openAiService: OpenAIService,
+): Promise<{ fileName: string; persons: string[] }[]> => {
     const reportsContent = getFilesContent(directory);
 
-    const reportsPersonList: { fileName: string, persons: string[] }[] = [];
+    const reportsPersonList: { fileName: string; persons: string[] }[] = [];
 
     for (const report of reportsContent) {
         if (report.text.includes('entry deleted')) {
@@ -67,26 +70,26 @@ const connectTextWithPerson = async(
     }
 
     return reportsPersonList;
-}
+};
 
 const generateKeywordsWithContext = async (
     reportsPersonDump: { fileName: string; persons: string[] }[],
     factsPersonDump: { fileName: string; persons: string[] }[],
-    openAiService: OpenAIService
+    openAiService: OpenAIService,
 ): Promise<Record<string, string>> => {
     const filesWithKeywords: Record<string, string> = {};
 
     for (const report of reportsPersonDump) {
-        const reportPerson = report.persons.filter(person => person !== 'Names not found')[0];
+        const reportPerson = report.persons.filter((person) => person !== 'Names not found')[0];
 
         const matchingFacts = reportPerson
-            ? factsPersonDump.filter(fact => {
-                return fact.persons.some(person => {
-                    console.log(person);
+            ? factsPersonDump.filter((fact) => {
+                  return fact.persons.some((person) => {
+                      console.log(person);
 
-                    return person.includes(reportPerson);
-                });
-            })
+                      return person.includes(reportPerson);
+                  });
+              })
             : [];
 
         const reportContent = fs.readFileSync(`assets/filesFromFactory/${report.fileName}`, 'utf8');
@@ -94,10 +97,19 @@ const generateKeywordsWithContext = async (
         const context = `
             Report File: ${report.fileName}
             Report Text: ${reportContent}
-            Matching Facts: ${matchingFacts.length > 0 ? matchingFacts.map(fact => {
-                const factContent = fs.readFileSync(`assets/filesFromFactory/facts/${fact.fileName}`, 'utf8');
-                return `Fact File: ${fact.fileName}\nPersons: ${fact.persons.join(', ')}\nText: ${factContent}`;
-            }).join('\n\n') : 'No matching facts'}
+            Matching Facts: ${
+                matchingFacts.length > 0
+                    ? matchingFacts
+                          .map((fact) => {
+                              const factContent = fs.readFileSync(
+                                  `assets/filesFromFactory/facts/${fact.fileName}`,
+                                  'utf8',
+                              );
+                              return `Fact File: ${fact.fileName}\nPersons: ${fact.persons.join(', ')}\nText: ${factContent}`;
+                          })
+                          .join('\n\n')
+                    : 'No matching facts'
+            }
         `;
 
         filesWithKeywords[report.fileName] = await generateKeyWords(context, openAiService);
@@ -109,12 +121,19 @@ const generateKeywordsWithContext = async (
 export const documents = async () => {
     const openAiService = new OpenAIService();
 
-    const factsPersonList = await connectTextWithPerson('assets/filesFromFactory/facts', openAiService);
+    const factsPersonList = await connectTextWithPerson(
+        'assets/filesFromFactory/facts',
+        openAiService,
+    );
     const reportsPersonList = await connectTextWithPerson('assets/filesFromFactory', openAiService);
 
-    const reportsKeywords = await generateKeywordsWithContext(reportsPersonList, factsPersonList, openAiService);
+    const reportsKeywords = await generateKeywordsWithContext(
+        reportsPersonList,
+        factsPersonList,
+        openAiService,
+    );
 
     const { message } = await verifyResults(reportsKeywords, 'dokumenty');
 
     return message;
-}
+};

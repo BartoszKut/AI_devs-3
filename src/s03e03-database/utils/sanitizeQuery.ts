@@ -6,4 +6,4 @@ export const sanitizeQuery = (sqlQuery: string) => {
     }
 
     return trimmedQuery;
-}
+};

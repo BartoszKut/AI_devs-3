@@ -8,7 +8,10 @@ interface Transcript {
     fileName: string;
 }
 
-export const transcriptAudioFiles = async (directory: string, openAiService: OpenAIService): Promise<Transcript[]> => {
+export const transcriptAudioFiles = async (
+    directory: string,
+    openAiService: OpenAIService,
+): Promise<Transcript[]> => {
     try {
         const files = await fs.promises.readdir(directory);
         const transcribedRecords: Transcript[] = [];
@@ -16,8 +19,13 @@ export const transcriptAudioFiles = async (directory: string, openAiService: Ope
         for (const file of files) {
             const filePath = path.join(directory, file);
 
-            if (fs.lstatSync(filePath).isFile() && ['.mp3', '.wav', '.flac', '.m4a'].includes(path.extname(file).toLowerCase())) {
-                const transcribedSTT = await openAiService.sttTranscription({ pathToFile: filePath });
+            if (
+                fs.lstatSync(filePath).isFile() &&
+                ['.mp3', '.wav', '.flac', '.m4a'].includes(path.extname(file).toLowerCase())
+            ) {
+                const transcribedSTT = await openAiService.sttTranscription({
+                    pathToFile: filePath,
+                });
                 transcribedRecords.push({ ...transcribedSTT, fileName: file });
             }
         }

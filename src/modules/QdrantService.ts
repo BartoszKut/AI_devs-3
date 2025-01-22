@@ -1,14 +1,14 @@
 import { QdrantClient } from '@qdrant/js-client-rest';
 
 export class QdrantService {
-    private qdrantClient: QdrantClient
+    private qdrantClient: QdrantClient;
 
     constructor() {
         this.qdrantClient = new QdrantClient({
             url: process.env.QDRANT_HOST,
             apiKey: process.env.QDRANT_API_KEY,
         });
-    };
+    }
 
     async getCollections(): Promise<{ collections: { name: string }[] }> {
         try {
@@ -30,11 +30,10 @@ export class QdrantService {
 
     async createCollection(collectionName: string): Promise<void> {
         try {
-            await this.qdrantClient.createCollection(
-                collectionName, {
+            await this.qdrantClient.createCollection(collectionName, {
                 vectors: {
                     size: 3072,
-                    distance: "Cosine",
+                    distance: 'Cosine',
                 },
                 shard_number: 1,
             });
@@ -44,7 +43,11 @@ export class QdrantService {
         }
     }
 
-    async upsert(collectionName: string, points: { id: number, vector: number[], payload: any }[]): Promise<void> {
+    async upsert(
+        collectionName: string,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        points: { id: number; vector: number[]; payload: any }[],
+    ): Promise<void> {
         try {
             await this.qdrantClient.upsert(collectionName, { points });
         } catch (error) {

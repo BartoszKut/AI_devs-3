@@ -1,15 +1,15 @@
 interface IShowTables {
     reply: {
-        Tables_in_banan: string,
-    }[],
+        Tables_in_banan: string;
+    }[];
     error: string;
 }
 
 interface IShowCreateTable {
     reply: {
-        Table: string,
-        'Create Table': string,
-    }[],
+        Table: string;
+        'Create Table': string;
+    }[];
     error: string;
 }
 
@@ -26,6 +26,7 @@ export class DbConnectService {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private async makePostRequest<T>(path: string, body: any): Promise<T> {
         const response = await fetch(`${this.url}${path}`, {
             method: 'POST',
@@ -37,7 +38,7 @@ export class DbConnectService {
 
         if (!response.ok) {
             throw new Error(
-                `HTTP ${response.status}: ${response.statusText} - ${await response.text()}`
+                `HTTP ${response.status}: ${response.statusText} - ${await response.text()}`,
             );
         }
 
@@ -50,7 +51,7 @@ export class DbConnectService {
             apikey: this.apiKey,
             query: query,
         };
-        
+
         try {
             return this.makePostRequest('/query', payload);
         } catch (e) {
@@ -69,7 +70,7 @@ export class DbConnectService {
     async showCreateTable(tableName: string): Promise<IShowCreateTable> {
         try {
             return this.select(`show create table ${tableName}`);
-        } catch (e){
+        } catch (e) {
             throw new Error(`Failed to fetch table structure: ${e}`);
         }
     }

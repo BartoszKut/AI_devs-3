@@ -32,25 +32,26 @@ async function indexTextWithFileMetadata(
     await qdrantService.upsert(COLLECTION_NAME, [point]);
 }
 
-const queryVectorWithQuestion = async (openAiService: OpenAIService, qdrantService: QdrantService) => {
+const queryVectorWithQuestion = async (
+    openAiService: OpenAIService,
+    qdrantService: QdrantService,
+) => {
     const embeddingResponse = await openAiService.createEmbedding({
         input: QUESTION,
     });
     const embedding = embeddingResponse.data[0].embedding;
 
-    return await qdrantService.search(
-        COLLECTION_NAME,
-        embedding,
-        1,
-    );
-}
+    return await qdrantService.search(COLLECTION_NAME, embedding, 1);
+};
 
 export const vectors = async (): Promise<string> => {
     const openAiService = new OpenAIService();
     const qdrantService = new QdrantService();
 
     const collections = await qdrantService.getCollections();
-    const collectionExists = collections.collections.some((collection) => collection.name === COLLECTION_NAME);
+    const collectionExists = collections.collections.some(
+        (collection) => collection.name === COLLECTION_NAME,
+    );
     if (collectionExists) {
         await qdrantService.deleteCollection(COLLECTION_NAME);
     }

@@ -18,7 +18,7 @@ const getTextFilesContent = (directory: string): FileContent[] => {
     const files = fs.readdirSync(directory);
     const textFilesContent: FileContent[] = [];
 
-    files.forEach(file => {
+    files.forEach((file) => {
         const filePath = path.join(directory, file);
 
         if (file.endsWith('.txt')) {
@@ -44,19 +44,19 @@ const convertPngToTxt = async (openAiService: OpenAIService): Promise<FileConten
     for (const image of preparedImages) {
         const { type, image_url } = image;
 
-        const convertedImage = await openAiService.completion({
+        const convertedImage = (await openAiService.completion({
             messages: [
                 {
                     role: 'system',
-                    content: prompt
+                    content: prompt,
                 },
                 {
                     role: 'user',
-                    // @ts-ignore
+                    // @ts-expect-error - type
                     content: [{ type, image_url }],
                 },
             ],
-        }) as ChatCompletion;
+        })) as ChatCompletion;
 
         if (!convertedImage.choices[0].message.content) {
             throw new Error('No content in converted image');
@@ -69,9 +69,9 @@ const convertPngToTxt = async (openAiService: OpenAIService): Promise<FileConten
     }
 
     return convertedImages;
-}
+};
 
-const filterFiles = async(files: FileContent[], openAiService: OpenAIService) => {
+const filterFiles = async (files: FileContent[], openAiService: OpenAIService) => {
     const prompt = `You are a helpful assistant and an expert in categorizing text content.
 
         <rules>
@@ -98,14 +98,14 @@ const filterFiles = async(files: FileContent[], openAiService: OpenAIService) =>
             AI: { 'result': 'false' }
         </examples>
     `;
-    
-    const filteredFiles: { people: string[], hardware: string[] } = {
+
+    const filteredFiles: { people: string[]; hardware: string[] } = {
         people: [],
         hardware: [],
     };
 
     for (const file of files) {
-        const filterResultResponse = await openAiService.completion({
+        const filterResultResponse = (await openAiService.completion({
             messages: [
                 {
                     role: 'user',
@@ -116,14 +116,16 @@ const filterFiles = async(files: FileContent[], openAiService: OpenAIService) =>
                     content: prompt,
                 },
             ],
-        }) as ChatCompletion;
+        })) as ChatCompletion;
 
         const filterResult = JSON.parse(filterResultResponse.choices[0].message.content || '');
 
         if (filterResult.result === 'true') {
-            filterResult.category === 'people'
-                ? filteredFiles.people.push(file.fileName)
-                : filteredFiles.hardware.push(file.fileName);
+            if (filterResult.category === 'people') {
+                filteredFiles.people.push(file.fileName);
+            } else {
+                filteredFiles.hardware.push(file.fileName);
+            }
         }
     }
 
@@ -140,8 +142,11 @@ export const categories = async () => {
     const transcribedRecords = await transcriptAudioFiles('assets/filesFromFactory', openAiService);
     const textFiles = getTextFilesContent('assets/filesFromFactory');
 
-    const filteredFiles = await filterFiles([...imagesDescription, ...transcribedRecords, ...textFiles], openAiService);
+    const filteredFiles = await filterFiles(
+        [...imagesDescription, ...transcribedRecords, ...textFiles],
+        openAiService,
+    );
     const { message } = await verifyResults(filteredFiles, 'kategorie');
 
     return message;
-}
+};

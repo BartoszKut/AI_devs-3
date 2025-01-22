@@ -37,6 +37,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 14. **`/connections`** - Solution for the "Connections Task" (Find the shortest path from Rafał to Barbara using a graph database - S03E05).
 15. **`/photos`** - Solution for the "Photos Task" (Prepare an accurate description of Barbara based on damaged photos - S04E01).
 16. **`/research`** - Solution for the "Research Task" (Analyze research results and determine which results can be trusted - S04E02).
+17. **`/softo`** - Solution for the "Softo Task" (Create a universal mechanism for searching information on websites of companies like SoftoAI - S04E03).
 
 ## Getting Started
 

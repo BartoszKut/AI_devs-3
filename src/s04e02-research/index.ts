@@ -80,8 +80,6 @@ export const research = async () => {
         console.error('Error generating JSONL file:', error);
     }
 
-    return;
-
     const linesToVerify = await readVerifyFile();
 
     const results = await Promise.all(linesToVerify.map(async (line) => {

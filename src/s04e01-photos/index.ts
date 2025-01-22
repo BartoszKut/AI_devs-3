@@ -7,16 +7,14 @@ import { processImageBasedOnBehavior } from './utils/processImageBasedOnBehavior
 const callOpenAI = async (
     openAiservice: OpenAIService,
     prompt: string,
-    additionalMessages: any = []
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    additionalMessages: any = [],
 ): Promise<ChatCompletion | null> => {
     try {
-        return await openAiservice.completion({
+        return (await openAiservice.completion({
             model: 'gpt-4o',
-            messages: [
-                { role: 'system', content: prompt },
-                ...additionalMessages,
-            ],
-        }) as ChatCompletion;
+            messages: [{ role: 'system', content: prompt }, ...additionalMessages],
+        })) as ChatCompletion;
     } catch (error) {
         console.error('[OpenAI] Error:', error);
 
@@ -27,7 +25,7 @@ const callOpenAI = async (
 const fixImage = async (
     imageUrl: string,
     openAiservice: OpenAIService,
-    maxRetries = 5
+    maxRetries = 5,
 ): Promise<string> => {
     const prompt = `You are a helpful assistant who helps with image repair.
         <rules>
@@ -96,7 +94,7 @@ const fixImage = async (
 
 export const generatePersonDescription = async (
     imageUrls: string[],
-    openAiservice: OpenAIService
+    openAiservice: OpenAIService,
 ): Promise<string> => {
     const prompt = `You are a helpful assistant who describes the person based on the provided images.
         <rules>
@@ -114,19 +112,15 @@ export const generatePersonDescription = async (
         </rules>`;
 
     try {
-        const response = await callOpenAI(
-            openAiservice,
-            prompt,
-            [
-                {
-                    role: 'user',
-                    content: imageUrls.map((url) => ({
-                        type: 'image_url',
-                        image_url: { url },
-                    })),
-                },
-            ]
-        );
+        const response = await callOpenAI(openAiservice, prompt, [
+            {
+                role: 'user',
+                content: imageUrls.map((url) => ({
+                    type: 'image_url',
+                    image_url: { url },
+                })),
+            },
+        ]);
 
         if (response?.choices?.[0]?.message?.content) {
             return response.choices[0]?.message?.content?.trim() || '';
@@ -151,7 +145,7 @@ export const photos = async () => {
     }
 
     const correctedImages = await Promise.all(
-        images.map((image) => fixImage(image, openAiService))
+        images.map((image) => fixImage(image, openAiService)),
     );
 
     const personDescription = await generatePersonDescription(correctedImages, openAiService);

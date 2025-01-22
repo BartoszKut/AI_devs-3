@@ -33,7 +33,7 @@ const generateRobotImage = async (keyWords: string) => {
     const openAiService = new OpenAIService();
 
     return await openAiService.imageGeneration({ prompt });
-}
+};
 
 const downloadImage = async (url: string) => {
     let counter = 1;
@@ -77,8 +77,9 @@ export const robot = async () => {
     try {
         const robotDescription = await fetchRobotDescription();
         const robotKeyWords = await getDescriptionKeyWords(robotDescription);
-        const robotImageUrl = await generateRobotImage(robotKeyWords)
-            .then(response => response.data[0].url);
+        const robotImageUrl = await generateRobotImage(robotKeyWords).then(
+            (response) => response.data[0].url,
+        );
 
         if (!robotImageUrl) {
             throw new Error('Failed to generate image');

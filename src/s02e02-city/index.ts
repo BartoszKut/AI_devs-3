@@ -1,6 +1,3 @@
-import path from "path";
-import fs from 'fs';
-
 import { OpenAIService } from '../modules/OpenAIService';
 import { ChatCompletion } from 'openai/resources/chat/completions';
 import { prepareLocalImagesForLLM } from '../utils/prepareLocalImagesForLLM';
@@ -29,20 +26,25 @@ export const city = async () => {
 
     const preparedImages = await prepareLocalImagesForLLM('src/s02e02-city/maps');
 
-    const cityResponse = await openAiService.completion({
+    const cityResponse = (await openAiService.completion({
         model: 'gpt-4o',
         messages: [
             {
                 role: 'system',
-                content: PROMPT
+                content: PROMPT,
             },
             {
                 role: 'user',
-                // @ts-ignore
-                content: [...preparedImages.map(image => ({ type: image.type, image_url: image.image_url }))],
+                // @ts-expect-error - content format
+                content: [
+                    ...preparedImages.map((image) => ({
+                        type: image.type,
+                        image_url: image.image_url,
+                    })),
+                ],
             },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return cityResponse.choices[0].message.content;
 };

@@ -2,7 +2,10 @@ import { OpenAIService } from '../../modules/OpenAIService';
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 
-export const generateKeyWords = async (text: string, openAiService: OpenAIService): Promise<string> => {
+export const generateKeyWords = async (
+    text: string,
+    openAiService: OpenAIService,
+): Promise<string> => {
     const prompt = `You are an expert in extracting keywords from text. Your task is to analyze provided text and generate a concise, high-quality list of keywords.     
         <rules>
             - Generated keywords must be in **correct Polish language**.
@@ -28,19 +31,19 @@ export const generateKeyWords = async (text: string, openAiService: OpenAIServic
         Please ensure all responses strictly conform to the rules and examples above.
     `;
 
-    const keywordsResponse = await openAiService.completion({
+    const keywordsResponse = (await openAiService.completion({
         model: 'gpt-4o',
         messages: [
             {
                 role: 'system',
-                content: prompt
+                content: prompt,
             },
             {
                 role: 'user',
                 content: text,
             },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return keywordsResponse.choices[0].message.content || '';
 };

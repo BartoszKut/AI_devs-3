@@ -11,44 +11,50 @@ const processFile = async (filePath: string, role: string) => {
     const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({
         input: fileStream,
-        crlfDelay: Infinity
+        crlfDelay: Infinity,
     });
 
-    const lines: { role: string, content: string }[] = [];
+    const lines: { role: string; content: string }[] = [];
     for await (const line of rl) {
         lines.push({ role, content: line });
     }
     return lines;
 };
 
-const createJSONLData = (lines: { role: string, content: string }[], label: string) => {
-    return lines.map(line => ({
+const createJSONLData = (lines: { role: string; content: string }[], label: string) => {
+    return lines.map((line) => ({
         messages: [
             { role: 'system', content: 'Check if it is CORRECT or NOT' },
             line,
-            { role: 'assistant', content: label }
+            { role: 'assistant', content: label },
         ],
     }));
 };
 
 const generateJSONL = async () => {
-    const correctLines = await processFile(path.join(__dirname, 'researches', 'correct.txt'), 'user');
-    const incorrectLines = await processFile(path.join(__dirname, 'researches', 'incorrect.txt'), 'user');
+    const correctLines = await processFile(
+        path.join(__dirname, 'researches', 'correct.txt'),
+        'user',
+    );
+    const incorrectLines = await processFile(
+        path.join(__dirname, 'researches', 'incorrect.txt'),
+        'user',
+    );
 
     const jsonlData = [
         ...createJSONLData(correctLines, 'correct'),
-        ...createJSONLData(incorrectLines, 'incorrect')
+        ...createJSONLData(incorrectLines, 'incorrect'),
     ];
 
-    const jsonlContent = jsonlData.map(obj => JSON.stringify(obj)).join('\n');
-    fs.writeFileSync(path.join(__dirname,'finetuning_data.jsonl'), jsonlContent);
+    const jsonlContent = jsonlData.map((obj) => JSON.stringify(obj)).join('\n');
+    fs.writeFileSync(path.join(__dirname, 'finetuning_data.jsonl'), jsonlContent);
 };
 
 const readVerifyFile = async () => {
     const fileStream = fs.createReadStream(path.join(__dirname, 'researches', 'verify.txt'));
     const rl = readline.createInterface({
         input: fileStream,
-        crlfDelay: Infinity
+        crlfDelay: Infinity,
     });
 
     const lines: string[] = [];
@@ -82,23 +88,28 @@ export const research = async () => {
 
     const linesToVerify = await readVerifyFile();
 
-    const results = await Promise.all(linesToVerify.map(async (line) => {
-        const { id, value } = extractIdAndValue(line);
+    const results = await Promise.all(
+        linesToVerify.map(async (line) => {
+            const { id, value } = extractIdAndValue(line);
 
-        const response = await openAiService.completion({
-            model: 'ft:gpt-4o-mini-2024-07-18:personal:ai-devs3-research-v2:ArmeLlcw',
-            messages: [
-                { role: 'system', content: 'Check if it is CORRECT or NOT. Return only correct or incorrect.' },
-                { role: 'user', content: value },
-            ],
-        }) as ChatCompletion;
+            const response = (await openAiService.completion({
+                model: 'ft:gpt-4o-mini-2024-07-18:personal:ai-devs3-research-v2:ArmeLlcw',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Check if it is CORRECT or NOT. Return only correct or incorrect.',
+                    },
+                    { role: 'user', content: value },
+                ],
+            })) as ChatCompletion;
 
-        return { id, response: response.choices[0].message.content || '' };
-    }));
+            return { id, response: response.choices[0].message.content || '' };
+        }),
+    );
 
     const verifiedIds = results
-        .filter(result => result.response === 'correct')
-        .map(result => result.id);
+        .filter((result) => result.response === 'correct')
+        .map((result) => result.id);
 
     const { message } = await verifyResults(verifiedIds, 'research');
 

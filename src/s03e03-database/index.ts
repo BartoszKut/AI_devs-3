@@ -5,7 +5,10 @@ import { sanitizeQuery } from './utils/sanitizeQuery';
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 
-const fetchAvailableTables = async (dbService: DbConnectService, openAiService: OpenAIService): Promise<string[]> => {
+const fetchAvailableTables = async (
+    dbService: DbConnectService,
+    openAiService: OpenAIService,
+): Promise<string[]> => {
     const prompt = `You are a helpful assistance who interprets the response from the database and provides a response in array.
     
     <rules>
@@ -30,21 +33,21 @@ const fetchAvailableTables = async (dbService: DbConnectService, openAiService: 
     const dbResponse = await dbService.showTables();
     const dbResponseString = JSON.stringify(dbResponse);
 
-    const aiResponse = await openAiService.completion({
+    const aiResponse = (await openAiService.completion({
         messages: [
             { role: 'system', content: prompt },
             { role: 'user', content: dbResponseString },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return JSON.parse(aiResponse.choices[0].message.content || '');
-}
+};
 
 const fetchTableStructures = async (
     tables: string[],
     dbService: DbConnectService,
-): Promise<{ tableName: string, createTable: string }[]> => {
-    const tablesStructures: { tableName: string, createTable: string }[] = [];
+): Promise<{ tableName: string; createTable: string }[]> => {
+    const tablesStructures: { tableName: string; createTable: string }[] = [];
 
     for (const table of tables) {
         const dbResponse = await dbService.showCreateTable(table);
@@ -56,10 +59,10 @@ const fetchTableStructures = async (
     }
 
     return tablesStructures;
-}
+};
 
 const generateAndExecuteQueryForQuestion = async (
-    tablesStructures: { tableName: string, createTable: string }[],
+    tablesStructures: { tableName: string; createTable: string }[],
     dbService: DbConnectService,
     openAiService: OpenAIService,
 ) => {
@@ -76,26 +79,30 @@ const generateAndExecuteQueryForQuestion = async (
         </rules> 
     `;
 
-    const dbQueryResponse = await openAiService.completion({
+    const dbQueryResponse = (await openAiService.completion({
         messages: [
             { role: 'system', content: prompt },
             { role: 'user', content: JSON.stringify(tablesStructures) },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     const dbQuery = sanitizeQuery(dbQueryResponse.choices[0].message.content || '');
 
     const dbResponseObject = await dbService.select(dbQuery);
 
-    const result = await openAiService.completion({
+    const result = (await openAiService.completion({
         messages: [
-            { role: 'system', content: 'You are a helpful assistance who interprets the response from the database and provides a response in array. Provide ONLY ids!.' },
+            {
+                role: 'system',
+                content:
+                    'You are a helpful assistance who interprets the response from the database and provides a response in array. Provide ONLY ids!.',
+            },
             { role: 'user', content: JSON.stringify(dbResponseObject) },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return JSON.parse(result.choices[0].message.content || '');
-}
+};
 
 export const database = async (): Promise<string> => {
     const openAiService = new OpenAIService();
@@ -103,7 +110,11 @@ export const database = async (): Promise<string> => {
 
     const availableTables = await fetchAvailableTables(dbService, openAiService);
     const tablesStructures = await fetchTableStructures(availableTables, dbService);
-    const results = await generateAndExecuteQueryForQuestion(tablesStructures, dbService, openAiService);
+    const results = await generateAndExecuteQueryForQuestion(
+        tablesStructures,
+        dbService,
+        openAiService,
+    );
 
     const { message } = await verifyResults(results, 'database');
 

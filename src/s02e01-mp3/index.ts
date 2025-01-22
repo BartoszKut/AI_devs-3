@@ -4,7 +4,10 @@ import { transcriptAudioFiles } from '../utils/transcriptAudioFiles';
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 
-const getInstituteName = async (transcriptData: { text: string }[], openAiService: OpenAIService): Promise<string | null> => {
+const getInstituteName = async (
+    transcriptData: { text: string }[],
+    openAiService: OpenAIService,
+): Promise<string | null> => {
     const PROMPT = `
         You are a helpful assistant who helps figure out the institute's name from a given text.
 
@@ -16,17 +19,20 @@ const getInstituteName = async (transcriptData: { text: string }[], openAiServic
         </rules>
     `;
 
-    const result = await openAiService.completion({
+    const result = (await openAiService.completion({
         messages: [
             { role: 'system', content: PROMPT },
-            { role: 'user', content: transcriptData.map(data => data.text).join(' ') },
+            { role: 'user', content: transcriptData.map((data) => data.text).join(' ') },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return result.choices[0].message.content;
 };
 
-const getStreetNameWhereProfessorTeaches = async (context: string, openAiService: OpenAIService): Promise<string | null> => {
+const getStreetNameWhereProfessorTeaches = async (
+    context: string,
+    openAiService: OpenAIService,
+): Promise<string | null> => {
     const promptToGetUniversity = `
         You are an intelligent and highly accurate assistant. Your sole task is to identify and provide the **exact name of the university** associated with a given institute.
 
@@ -69,21 +75,21 @@ const getStreetNameWhereProfessorTeaches = async (context: string, openAiService
         </notes>
     `;
 
-    const universityNameResponse = await openAiService.completion({
+    const universityNameResponse = (await openAiService.completion({
         messages: [
             { role: 'system', content: promptToGetUniversity },
             { role: 'user', content: context },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     const universityName = universityNameResponse.choices[0].message.content;
 
-    const streetNameResponse = await openAiService.completion({
+    const streetNameResponse = (await openAiService.completion({
         messages: [
             { role: 'system', content: promptToGetStreetName },
             { role: 'user', content: `University - ${universityName}, Institute - ${context}` },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     return streetNameResponse.choices[0].message.content;
 };
@@ -92,7 +98,10 @@ export const mp3 = async () => {
     const openAiService = new OpenAIService();
 
     try {
-        const transcribedRecords = await transcriptAudioFiles('src/s02e01-mp3/auditionRecords', openAiService);
+        const transcribedRecords = await transcriptAudioFiles(
+            'src/s02e01-mp3/auditionRecords',
+            openAiService,
+        );
         const instituteName = await getInstituteName(transcribedRecords, openAiService);
 
         if (!instituteName) {

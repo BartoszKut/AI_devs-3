@@ -49,7 +49,7 @@ const readCalibrationFile = async (): Promise<CalibrationFile> => {
 const processTestData = (data: CalibrationFile): string[] => {
     const testQuestions: string[] = [];
 
-    data['test-data'].forEach(item => {
+    data['test-data'].forEach((item) => {
         const [num1, num2] = item.question.split(' + ').map(Number);
         const correctAnswer = num1 + num2;
 
@@ -65,12 +65,12 @@ const processTestData = (data: CalibrationFile): string[] => {
     return testQuestions;
 };
 
-const updateCalibrationFile = (data: CalibrationFile, answers: { q: string, a: string }[]) => {
-    const answerMap = new Map(answers.map(answer => [answer.q, answer.a]));
+const updateCalibrationFile = (data: CalibrationFile, answers: { q: string; a: string }[]) => {
+    const answerMap = new Map(answers.map((answer) => [answer.q, answer.a]));
 
     data.apikey = process.env.AI_DEVS_API_KEY || '';
 
-    data['test-data'].forEach(item => {
+    data['test-data'].forEach((item) => {
         if (item.test?.q) {
             const answer = answerMap.get(item.test.q);
             if (answer) {
@@ -87,7 +87,7 @@ export const fix = async () => {
 
     const questions = processTestData(calibrationFile);
 
-    const generatedAiResponse = await openAiService.completion({
+    const generatedAiResponse = (await openAiService.completion({
         messages: [
             {
                 role: 'user',
@@ -98,7 +98,7 @@ export const fix = async () => {
                 content: PROMPT,
             },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     updateCalibrationFile(
         calibrationFile,

@@ -3,10 +3,13 @@ import { verifyResults } from '../../utils/verifyResults';
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 import type { OpenAIService } from '../../modules/OpenAIService';
 
-export const extractImages = async (openAiService: OpenAIService, imagesResponse?: string): Promise<string[]> => {
+export const extractImages = async (
+    openAiService: OpenAIService,
+    imagesResponse?: string,
+): Promise<string[]> => {
     if (!imagesResponse) {
         // verifyResult in this case used as api call to get the text
-        const { message } = await verifyResults('START', 'photos')
+        const { message } = await verifyResults('START', 'photos');
 
         imagesResponse = message;
     }
@@ -26,7 +29,7 @@ export const extractImages = async (openAiService: OpenAIService, imagesResponse
             User: "Pyk, pyk, pyk, pytk jako tako i fajrant! Dałem z siebie całe 30% - proszę: IMG_1443_FT12.PN"
             AI: ["https://centrala.ag3nts.org/dane/barbara/IMG_1443_FT12.PN"]
 
-            User: "NO! Teraz widać twarze i włosy. To był dobry pomysł! https://centrala.ag3nts.org/dane/barbara/IMG_1410_FXER.PNG"
+            User: "NO! Teraz widać twarze i włosy. To był dobry pomysł! https://centrala.ag3nts.org/dane/barbara/IMG_1410_FXER.PNG"
             AI: ["https://centrala.ag3nts.org/dane/barbara/IMG_1410_FXER.PNG"]
 
             User: "Images: https://static.com/pic1.PNG, paths: /invalid, /path/to/image.png, base path: https://assets.com/"
@@ -44,7 +47,7 @@ export const extractImages = async (openAiService: OpenAIService, imagesResponse
     let extractedImages = '';
 
     try {
-        const extractedImagesResponse = await openAiService.completion({
+        const extractedImagesResponse = (await openAiService.completion({
             model: 'gpt-4o',
             messages: [
                 {
@@ -52,12 +55,14 @@ export const extractImages = async (openAiService: OpenAIService, imagesResponse
                     content: prompt,
                 },
             ],
-        }) as ChatCompletion;
+        })) as ChatCompletion;
 
         extractedImages = extractedImagesResponse.choices[0].message.content || '';
 
         return JSON.parse(extractedImages);
     } catch (e) {
-        throw new Error(`Failed to extract images: extractedImages - ${extractedImages}, ${e instanceof Error ? e.message : 'Unknown error'}`);
+        throw new Error(
+            `Failed to extract images: extractedImages - ${extractedImages}, ${e instanceof Error ? e.message : 'Unknown error'}`,
+        );
     }
-}
+};

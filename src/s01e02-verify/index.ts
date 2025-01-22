@@ -1,11 +1,11 @@
 import { OpenAIService } from '../modules/OpenAIService';
-import { fetchFromApi } from "../utils/fetchFromApi";
+import { fetchFromApi } from '../utils/fetchFromApi';
 
 import type { ChatCompletion } from 'openai/resources/chat/completions';
 
 type VerifyEndpointResponse = {
-    text: string,
-    msgID: string,
+    text: string;
+    msgID: string;
 };
 
 const PROMPT = `You are the helpful assistant who tries to help with identity verification
@@ -30,26 +30,24 @@ const PROMPT = `You are the helpful assistant who tries to help with identity ve
     </examples>
 `;
 
-const getVerifyQuestionFromRobot = async (): Promise<VerifyEndpointResponse> => (
+const getVerifyQuestionFromRobot = async (): Promise<VerifyEndpointResponse> =>
     await fetchFromApi('https://xyz.ag3nts.org/verify', {
-        'msgID': 0,
-        'text': 'READY',
-    })
-);
+        msgID: 0,
+        text: 'READY',
+    });
 
-const verifyIdentity = async (answer: string, msgID: string): Promise<VerifyEndpointResponse> => (
+const verifyIdentity = async (answer: string, msgID: string): Promise<VerifyEndpointResponse> =>
     fetchFromApi('https://xyz.ag3nts.org/verify', {
-        'msgID': msgID,
-        'text': answer,
-    })
-);
+        msgID: msgID,
+        text: answer,
+    });
 
 export const verify = async () => {
     const openAiService = new OpenAIService();
 
     const { msgID, text: question } = await getVerifyQuestionFromRobot();
 
-    const generatedAiResponse = await openAiService.completion({
+    const generatedAiResponse = (await openAiService.completion({
         messages: [
             {
                 role: 'user',
@@ -60,11 +58,11 @@ export const verify = async () => {
                 content: PROMPT,
             },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
     const answer = generatedAiResponse.choices[0].message.content || '';
 
     const { text: flag } = await verifyIdentity(answer, msgID);
 
     return flag;
-}
+};

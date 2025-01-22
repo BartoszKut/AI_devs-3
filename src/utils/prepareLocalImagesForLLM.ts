@@ -1,11 +1,11 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 export interface ImageForLLM {
-    type: string,
+    type: string;
     image_url: {
-        url: string,
-    },
+        url: string;
+    };
     fileName: string;
 }
 
@@ -34,4 +34,4 @@ export const prepareLocalImagesForLLM = async (directory: string): Promise<Image
     }
 
     return formattedImages;
-}
+};

@@ -39,14 +39,14 @@ const fetchPageContent = async (url: string): Promise<string> => {
     }
 };
 
-const getAnswerAvailability = async(
+const getAnswerAvailability = async (
     question: string,
     pageContent: string,
-    openAiService: OpenAIService
+    openAiService: OpenAIService,
 ): Promise<{
-    isAnswerAvailable: boolean,
-    answer: string | null,
-    href: string | null,
+    isAnswerAvailable: boolean;
+    answer: string | null;
+    href: string | null;
 }> => {
     const prompt = `You are a helpful assistant who answers questions about Softo.
         Question: ${question}
@@ -93,20 +93,20 @@ const getAnswerAvailability = async(
         </examples>
     `;
 
-    const response = await openAiService.completion({
+    const response = (await openAiService.completion({
         messages: [
             {
                 role: 'system',
-                content: prompt
+                content: prompt,
             },
             {
                 role: 'user',
-                content: pageContent
-            }
+                content: pageContent,
+            },
         ],
-    }) as ChatCompletion;
+    })) as ChatCompletion;
 
-    console.log(response.choices[0].message.content)
+    console.log(response.choices[0].message.content);
 
     return JSON.parse(response.choices[0].message.content || '');
 };
@@ -116,13 +116,17 @@ const fetchAnswerRecursively = async (
     pageContent: string,
     openAiService: OpenAIService,
     depth: number = 0,
-    maxDepth: number = 4
+    maxDepth: number = 4,
 ): Promise<string> => {
     if (depth > maxDepth) {
         return '';
     }
 
-    const { isAnswerAvailable, answer, href } = await getAnswerAvailability(question, pageContent, openAiService);
+    const { isAnswerAvailable, answer, href } = await getAnswerAvailability(
+        question,
+        pageContent,
+        openAiService,
+    );
 
     if (isAnswerAvailable) {
         return answer ?? '';
@@ -132,7 +136,13 @@ const fetchAnswerRecursively = async (
         const url = href.includes(BASE_PAGE) ? href : `${BASE_PAGE}${href}`;
 
         const newPageContent = await fetchPageContent(url);
-        return await fetchAnswerRecursively(question, newPageContent, openAiService, depth + 1, maxDepth);
+        return await fetchAnswerRecursively(
+            question,
+            newPageContent,
+            openAiService,
+            depth + 1,
+            maxDepth,
+        );
     }
 
     return '';
@@ -147,7 +157,7 @@ export const softo = async () => {
     const answers: { [key: string]: string } = {};
 
     for (const key in questions) {
-        if (questions.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(questions, key)) {
             answers[key] = await fetchAnswerRecursively(questions[key], pageContent, openAiService);
         }
     }

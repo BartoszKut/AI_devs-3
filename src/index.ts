@@ -15,6 +15,7 @@ import { loop } from './s03e04-loop';
 import { connections } from './s03e05-connections';
 import { photos } from './s04e01-photos';
 import { research } from './s04e02-research';
+import { softo } from './s04e03-softo';
 
 const app = new Elysia()
     .get('/', () => 'Hello Elysia')
@@ -34,6 +35,7 @@ const app = new Elysia()
     .get('/connections', () => connections())
     .get('/photos', () => photos())
     .get('/research', () => research())
+    .get('/softo', () => softo())
     .listen(3000);
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);

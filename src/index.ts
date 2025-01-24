@@ -16,6 +16,7 @@ import { connections } from './s03e05-connections';
 import { photos } from './s04e01-photos';
 import { research } from './s04e02-research';
 import { softo } from './s04e03-softo';
+import { webhook, webhookApi } from './s04e04-webhook';
 
 const app = new Elysia()
     .get('/', () => 'Hello Elysia')
@@ -36,6 +37,8 @@ const app = new Elysia()
     .get('/photos', () => photos())
     .get('/research', () => research())
     .get('/softo', () => softo())
+    .get('/webhook', () => webhook())
+    .post('/webhookApi', ({ body }) => webhookApi(body))
     .listen(3000);
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);

@@ -38,6 +38,7 @@ Below is a list of the available endpoints (tasks may be updated or expanded ove
 15. **`/photos`** - Solution for the "Photos Task" (Prepare an accurate description of Barbara based on damaged photos - S04E01).
 16. **`/research`** - Solution for the "Research Task" (Analyze research results and determine which results can be trusted - S04E02).
 17. **`/softo`** - Solution for the "Softo Task" (Create a universal mechanism for searching information on websites of companies like SoftoAI - S04E03).
+18. **`/webhook`** & **`/webhookApi`** - Solution for the "Webhook Task" (Create an API that processes instructions in Polish and calculates the final position of a drone - S04E04).
 
 ## Getting Started
 
